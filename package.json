@@ -1,0 +1,32 @@
+{
+  "name": "50c14l-n37w0rk-api",
+  "version": "1.0.0",
+  "description": "Node.js social network API using Express & MongoDB. Supports user interactions, posts, and friend connections for scalable social media backends.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wileland/50c14L-N37w0rK-APi.git"
+  },
+  "keywords": [
+    "social-network",
+    "api",
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "backend",
+    "restful-api",
+    "no-sql",
+    "javascript"
+  ],
+  "author": "William L. Haynes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wileland/50c14L-N37w0rK-APi/issues"
+  },
+  "homepage": "https://github.com/wileland/50c14L-N37w0rK-APi#readme"
+}
