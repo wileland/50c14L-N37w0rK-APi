@@ -28,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/wileland/50c14L-N37w0rK-APi/issues"
   },
-  "homepage": "https://github.com/wileland/50c14L-N37w0rK-APi#readme"
+  "homepage": "https://github.com/wileland/50c14L-N37w0rK-APi#readme",
+  "dependencies": {
+    "dayjs": "^1.11.10"
+  }
 }
