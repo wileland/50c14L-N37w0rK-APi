@@ -1,21 +1,44 @@
 // models/User.js
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: "Username is required",
-    trim: true,
+const userSchema = new Schema(
+  {
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+\@.+\..+/, "Please enter a valid email address"], // Simple regex for email validation
+    },
+    thoughts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Thought",
+      },
+    ],
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
-  email: {
-    type: String,
-    required: "Email is required",
-    unique: true,
-    match: [/.+\@.+\..+/, "Please fill a valid email address"],
-  },
-  // Add thoughts and friends with ref to respective models
-  // Next steps: Define the rest of the User schema.
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
+
+// Create a virtual property `friendCount` that retrieves the length of the user's friends array field on query.
+userSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
 });
 
 const User = mongoose.model("User", userSchema);

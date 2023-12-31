@@ -1,6 +1,12 @@
 // controllers/thoughtController.js
 const Thought = require("../models/Thought");
-const User = require("../models/User"); // Assuming you have a User model for referencing the user's thoughts.
+const User = require("../models/User");
+
+// Helper function to validate thought existence
+async function validateThoughtExists(thoughtId) {
+  const thought = await Thought.findById(thoughtId);
+  return thought != null;
+}
 
 // Get all thoughts
 exports.getAllThoughts = async (req, res) => {
@@ -8,7 +14,9 @@ exports.getAllThoughts = async (req, res) => {
     const thoughts = await Thought.find({});
     res.json(thoughts);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching thoughts", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching thoughts", error: error.message });
   }
 };
 
@@ -21,89 +29,107 @@ exports.getThoughtById = async (req, res) => {
     }
     res.json(thought);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching thought", error });
+    res
+      .status(500)
+      .json({ message: "Error fetching thought", error: error.message });
   }
 };
 
 // Create a new thought
 exports.createThought = async (req, res) => {
+  if (!req.body.thoughtText || !req.body.username) {
+    return res
+      .status(400)
+      .json({ message: "Thought text and username are required" });
+  }
+
   try {
     const thought = await Thought.create(req.body);
-    // Assuming that the User model has a 'thoughts' field that references thoughts
     await User.findByIdAndUpdate(req.body.userId, {
       $push: { thoughts: thought._id },
     });
     res.status(201).json(thought);
   } catch (error) {
-    res.status(400).json({ message: "Error creating thought", error });
+    res
+      .status(400)
+      .json({ message: "Error creating thought", error: error.message });
   }
 };
 
 // Update a thought by id
 exports.updateThought = async (req, res) => {
+  if (!validateThoughtExists(req.params.id)) {
+    return res.status(404).json({ message: "Thought not found" });
+  }
+
   try {
     const thought = await Thought.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!thought) {
-      return res.status(404).json({ message: "Thought not found" });
-    }
     res.json(thought);
   } catch (error) {
-    res.status(400).json({ message: "Error updating thought", error });
+    res
+      .status(400)
+      .json({ message: "Error updating thought", error: error.message });
   }
 };
 
 // Delete a thought by id
 exports.deleteThought = async (req, res) => {
+  if (!validateThoughtExists(req.params.id)) {
+    return res.status(404).json({ message: "Thought not found" });
+  }
+
   try {
     const thought = await Thought.findByIdAndDelete(req.params.id);
-    if (!thought) {
-      return res.status(404).json({ message: "Thought not found" });
-    }
-    // Also remove the reference to the deleted thought from the user's thoughts array
     await User.findByIdAndUpdate(thought.userId, {
       $pull: { thoughts: thought._id },
     });
     res.json({ message: "Thought successfully deleted" });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting thought", error });
+    res
+      .status(500)
+      .json({ message: "Error deleting thought", error: error.message });
   }
 };
 
 // Add a reaction to a thought
 exports.addReaction = async (req, res) => {
+  if (!validateThoughtExists(req.params.thoughtId)) {
+    return res.status(404).json({ message: "Thought not found" });
+  }
+
   try {
-    // Assuming reactions is a subdocument schema on Thought model
     const thought = await Thought.findByIdAndUpdate(
       req.params.thoughtId,
       { $push: { reactions: req.body } },
       { new: true }
     );
-    if (!thought) {
-      return res.status(404).json({ message: "Thought not found" });
-    }
     res.json(thought);
   } catch (error) {
-    res.status(400).json({ message: "Error adding reaction", error });
+    res
+      .status(400)
+      .json({ message: "Error adding reaction", error: error.message });
   }
 };
 
 // Remove a reaction from a thought
 exports.removeReaction = async (req, res) => {
+  if (!validateThoughtExists(req.params.thoughtId)) {
+    return res.status(404).json({ message: "Thought or reaction not found" });
+  }
+
   try {
-    // Assuming reactions is a subdocument schema on Thought model and each reaction has a unique _id
     const thought = await Thought.findByIdAndUpdate(
       req.params.thoughtId,
       { $pull: { reactions: { _id: req.params.reactionId } } },
       { new: true }
     );
-    if (!thought) {
-      return res.status(404).json({ message: "Thought or reaction not found" });
-    }
     res.json(thought);
   } catch (error) {
-    res.status(500).json({ message: "Error removing reaction", error });
+    res
+      .status(500)
+      .json({ message: "Error removing reaction", error: error.message });
   }
 };
 
