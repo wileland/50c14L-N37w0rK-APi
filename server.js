@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config(); // This line is required to use the .env variables
 const express = require("express");
 const mongoose = require("mongoose");
@@ -13,13 +12,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost/socialNetworkDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true, // Remove if you're using Mongoose 6.x.x or later, as it's no longer necessary.
-    useFindAndModify: false, // Remove if you're using Mongoose 6.x.x or later, as it's no longer necessary.
-  })
+mongoose.connect(
+    process.env.MONGODB_URI || "mongodb://localhost:27017/socialNetworkDB",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    }
+  )
   .then(() => {
     console.log("Connected to MongoDB");
     // Start the Express server after the database connection is established

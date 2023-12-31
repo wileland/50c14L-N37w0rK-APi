@@ -3,8 +3,14 @@ const User = require("../models/User");
 
 // Helper function to validate user existence
 async function validateUserExists(userId) {
-  const user = await User.findById(userId);
-  return user != null;
+  try {
+    const user = await User.findById(userId);
+    return user != null;
+  } catch (error) {
+    // Log error and return false if there's a problem with the database operation
+    console.error(`Error validating user existence: ${error.message}`);
+    return false;
+  }
 }
 
 // Add a new user
@@ -52,7 +58,8 @@ exports.getUserById = async (req, res) => {
 
 // Update a user by id
 exports.updateUser = async (req, res) => {
-  if (!validateUserExists(req.params.id)) {
+  const userExists = await validateUserExists(req.params.id);
+  if (!userExists) {
     return res.status(404).json({ message: "User not found" });
   }
 
@@ -70,13 +77,13 @@ exports.updateUser = async (req, res) => {
 
 // Delete a user by id
 exports.deleteUser = async (req, res) => {
-  if (!validateUserExists(req.params.id)) {
+  const userExists = await validateUserExists(req.params.id);
+  if (!userExists) {
     return res.status(404).json({ message: "User not found" });
   }
 
   try {
     await User.findByIdAndDelete(req.params.id);
-    // Additional logic to handle deletion of related data (e.g., user's thoughts) if required
     res.json({ message: "User successfully deleted" });
   } catch (error) {
     res
@@ -87,7 +94,8 @@ exports.deleteUser = async (req, res) => {
 
 // Add a friend to a user's friend list
 exports.addFriend = async (req, res) => {
-  if (!validateUserExists(req.params.userId)) {
+  const userExists = await validateUserExists(req.params.userId);
+  if (!userExists) {
     return res.status(404).json({ message: "User not found" });
   }
 
@@ -107,7 +115,8 @@ exports.addFriend = async (req, res) => {
 
 // Remove a friend from a user's friend list
 exports.removeFriend = async (req, res) => {
-  if (!validateUserExists(req.params.userId)) {
+  const userExists = await validateUserExists(req.params.userId);
+  if (!userExists) {
     return res.status(404).json({ message: "User not found" });
   }
 
@@ -123,14 +132,4 @@ exports.removeFriend = async (req, res) => {
       .status(400)
       .json({ message: "Error removing friend", error: error.message });
   }
-};
-
-module.exports = {
-  createUser,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-  addFriend,
-  removeFriend,
 };

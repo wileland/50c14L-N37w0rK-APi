@@ -1,22 +1,28 @@
-// controllers/thoughtController.js
 const Thought = require("../models/Thought");
 const User = require("../models/User");
 
 // Helper function to validate thought existence
-async function validateThoughtExists(thoughtId) {
+const validateThoughtExists = async (thoughtId) => {
   const thought = await Thought.findById(thoughtId);
-  return thought != null;
-}
+  return thought !== null;
+};
+
+// Helper function for sending error responses
+const sendErrorResponse = (res, status, message, error) => {
+  res.status(status).json({ message, error: error.message });
+};
 
 // Get all thoughts
 exports.getAllThoughts = async (req, res) => {
   try {
+    // Use the `Thought` model to find all thoughts in the database
     const thoughts = await Thought.find({});
+
+    // Send a JSON response with the retrieved thoughts
     res.json(thoughts);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error fetching thoughts", error: error.message });
+    // Handle any errors that occur during the retrieval process
+    sendErrorResponse(res, 500, "Error fetching thoughts", error);
   }
 };
 
@@ -58,7 +64,7 @@ exports.createThought = async (req, res) => {
 
 // Update a thought by id
 exports.updateThought = async (req, res) => {
-  if (!validateThoughtExists(req.params.id)) {
+  if (!(await validateThoughtExists(req.params.id))) {
     return res.status(404).json({ message: "Thought not found" });
   }
 
@@ -76,7 +82,7 @@ exports.updateThought = async (req, res) => {
 
 // Delete a thought by id
 exports.deleteThought = async (req, res) => {
-  if (!validateThoughtExists(req.params.id)) {
+  if (!(await validateThoughtExists(req.params.id))) {
     return res.status(404).json({ message: "Thought not found" });
   }
 
@@ -95,7 +101,7 @@ exports.deleteThought = async (req, res) => {
 
 // Add a reaction to a thought
 exports.addReaction = async (req, res) => {
-  if (!validateThoughtExists(req.params.thoughtId)) {
+  if (!(await validateThoughtExists(req.params.thoughtId))) {
     return res.status(404).json({ message: "Thought not found" });
   }
 
@@ -115,7 +121,7 @@ exports.addReaction = async (req, res) => {
 
 // Remove a reaction from a thought
 exports.removeReaction = async (req, res) => {
-  if (!validateThoughtExists(req.params.thoughtId)) {
+  if (!(await validateThoughtExists(req.params.thoughtId))) {
     return res.status(404).json({ message: "Thought or reaction not found" });
   }
 
@@ -133,12 +139,6 @@ exports.removeReaction = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAllThoughts,
-  getThoughtById,
-  createThought,
-  updateThought,
-  deleteThought,
-  addReaction,
-  removeReaction,
-};
+module.exports = exports;
+  
+
