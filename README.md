@@ -52,7 +52,7 @@ For a complete list with methods and descriptions, refer to the enclosed api_doc
 
 Contributing
 <a name="contributing"></a>
-Contributions are welcome! Please refer to the CONTRIBUTING.md file for detailed instructions on how to propose changes.
+Contributions are welcome! 
 
 License
 <a name="license"></a>
