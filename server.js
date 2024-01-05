@@ -1,4 +1,7 @@
 require("dotenv").config(); // This line is required to use the .env variables
+const connectDB = require("./config/database");
+const User = require("./models/User");
+
 const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./routes"); // Make sure you have an index.js file in your routes directory

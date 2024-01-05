@@ -14,7 +14,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: [/.+\@.+\..+/, "Please enter a valid email address"], // Simple regex for email validation
+      match: [/.+\@.+\..+/, "Please enter a valid email address"], // Simple regex for email validation- ty challenge 17!
     },
     thoughts: [
       {
@@ -43,4 +43,4 @@ userSchema.virtual("friendCount").get(function () {
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);
