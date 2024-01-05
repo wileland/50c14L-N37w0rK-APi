@@ -6,8 +6,6 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
     });
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);
@@ -19,5 +17,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-
-// Next steps: Import this function in your server.js and invoke it to establish the database connection.

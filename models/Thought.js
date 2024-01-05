@@ -1,13 +1,12 @@
 // models/Thought.js
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const reactionSchema = new Schema(
+const reactionSchema = new mongoose.Schema(
   {
     reactionBody: {
       type: String,
       required: true,
-      maxlength: 280, // Limit the reaction body to 280 characters
+      maxlength: 280,
     },
     username: {
       type: String,
@@ -15,22 +14,22 @@ const reactionSchema = new Schema(
     },
   },
   {
-    timestamps: true, // Automatically create createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
-const thoughtSchema = new Schema(
+const thoughtSchema = new mongoose.Schema(
   {
     thoughtText: {
       type: String,
       required: true,
       minlength: 1,
-      maxlength: 280, // Assuming a maximum length of 280 characters for thoughts
+      maxlength: 280,
     },
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (timestamp) => timestamp.toISOString(), // Format timestamp on query
+      get: (timestamp) => timestamp.toISOString(),
     },
     username: {
       type: String,
@@ -41,16 +40,15 @@ const thoughtSchema = new Schema(
   {
     toJSON: {
       getters: true,
-      virtuals: true, // Ensure virtuals are included in JSON output
+      virtuals: true,
     },
+    id: false,
   }
 );
 
-// Create a virtual property `reactionCount` that retrieves the length of the thought's reactions array field on query.
 thoughtSchema.virtual("reactionCount").get(function () {
   return this.reactions.length;
 });
 
 const Thought = mongoose.model("Thought", thoughtSchema);
-
 module.exports = Thought;

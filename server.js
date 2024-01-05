@@ -1,11 +1,8 @@
-require("dotenv").config(); // This line is required to use the .env variables
+require("dotenv").config();
 const connectDB = require("./config/database");
-const User = require("./models/User");
+const routes = require("./routes"); // Assumes an index.js in your routes directory
 
 const express = require("express");
-const mongoose = require("mongoose");
-const routes = require("./routes"); // Make sure you have an index.js file in your routes directory
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -14,19 +11,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
-// Connect to MongoDB
-mongoose.connect(
-    process.env.MONGODB_URI || "mongodb://localhost:27017/socialNetworkDB",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-    }
-  )
+// Connect to MongoDB and start the server
+connectDB()
   .then(() => {
-    console.log("Connected to MongoDB");
-    // Start the Express server after the database connection is established
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
